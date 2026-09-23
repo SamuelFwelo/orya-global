@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { AnimatePresence, motion, useInView, useMotionTemplate, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, ArrowUpRight, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { CapabilityOrbit, OrbitalStage } from "@/components/OrbitalStage";
+import { ScrollDrift } from "@/components/ScrollDrift";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { outcomes, process, signalJourney } from "@/lib/siteData";
 
@@ -60,8 +61,16 @@ export default function Home() {
   const imageY = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
   const orbitX = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
   const orbitY = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
-  const imageTransform = useMotionTemplate`translate3d(${imageX}px, ${imageY}px, 0) scale(1.035)`;
-  const orbitTransform = useMotionTemplate`translate3d(${orbitX}px, ${orbitY}px, 0)`;
+  const { scrollY } = useScroll();
+  const imageScrollY = useSpring(useTransform(scrollY, [0, 900], [0, 84]), { stiffness: 115, damping: 28, mass: 0.3 });
+  const orbitScrollY = useSpring(useTransform(scrollY, [0, 900], [0, -64]), { stiffness: 115, damping: 28, mass: 0.3 });
+  const copyScrollY = useSpring(useTransform(scrollY, [0, 620], [0, -34]), { stiffness: 115, damping: 28, mass: 0.3 });
+  const copyOpacity = useTransform(scrollY, [0, 620], [1, 0.78]);
+  const imageYWithScroll = useTransform([imageY, imageScrollY], (latest) => Number(latest[0]) + Number(latest[1]));
+  const orbitYWithScroll = useTransform([orbitY, orbitScrollY], (latest) => Number(latest[0]) + Number(latest[1]));
+  const imageTransform = useMotionTemplate`translate3d(${imageX}px, ${imageYWithScroll}px, 0) scale(1.035)`;
+  const orbitTransform = useMotionTemplate`translate3d(${orbitX}px, ${orbitYWithScroll}px, 0)`;
+  const copyTransform = useMotionTemplate`translate3d(0, ${copyScrollY}px, 0)`;
 
   usePageMeta(
     "ORYA | Digital Growth, Automation & Business Intelligence",
@@ -96,14 +105,16 @@ export default function Home() {
         <div className="hero__grid" />
         <motion.div className="hero__orbital" style={{ transform: orbitTransform }}><OrbitalStage /></motion.div>
         <div className="container hero__content">
-          <motion.div className="hero__copy" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translate3d(0, 28px, 0)" }} animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }} transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-            <div className="hero__kicker"><span className="signal-dot" />TECHNOLOGY / GROWTH / INTELLIGENCE</div>
-            <h1>Digital systems<br />that move business<br /><em>forward.</em></h1>
-            <p>ORYA combines digital growth, web development, automation and operational intelligence to help ambitious companies grow and operate more effectively.</p>
-            <div className="hero__actions">
-              <Link href="/contact" className="orbital-button orbital-button--light"><span>Book a discovery call</span><ArrowUpRight size={18} /></Link>
-              <Link href="/capabilities" className="text-link">Explore our capabilities <ArrowRight size={17} /></Link>
-            </div>
+          <motion.div className="hero__copy-drift" style={{ transform: reduceMotion ? "translate3d(0, 0, 0)" : copyTransform, opacity: reduceMotion ? 1 : copyOpacity }}>
+            <motion.div className="hero__copy" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translate3d(0, 28px, 0)" }} animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }} transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+              <div className="hero__kicker"><span className="signal-dot" />TECHNOLOGY / GROWTH / INTELLIGENCE</div>
+              <h1>Digital systems<br />that move business<br /><em>forward.</em></h1>
+              <p>ORYA combines digital growth, web development, automation and operational intelligence to help ambitious companies grow and operate more effectively.</p>
+              <div className="hero__actions">
+                <Link href="/contact" className="orbital-button orbital-button--light"><span>Book a discovery call</span><ArrowUpRight size={18} /></Link>
+                <Link href="/capabilities" className="text-link">Explore our capabilities <ArrowRight size={17} /></Link>
+              </div>
+            </motion.div>
           </motion.div>
           <div className="hero__rail">
             <span className="mono">ORYA / SYSTEM 001</span>
@@ -135,10 +146,10 @@ export default function Home() {
       <section className="capabilities-section section-pad">
         <div className="capabilities-section__beam" />
         <div className="container">
-          <div className="section-heading section-heading--split">
+          <ScrollDrift className="section-heading section-heading--split">
             <div><span className="eyebrow">02 / CONNECTED CAPABILITIES</span><h2>One system.<br /><em>Four forces.</em></h2></div>
             <p>Not separate agency services. A connected operating model designed around what the business needs to achieve next.</p>
-          </div>
+          </ScrollDrift>
           <CapabilityOrbit />
           <Link href="/capabilities" className="section-link">View all capabilities <ArrowUpRight size={18} /></Link>
         </div>
@@ -146,10 +157,10 @@ export default function Home() {
 
       <section className="work-section section-pad">
         <div className="container">
-          <div className="section-heading section-heading--split">
+          <ScrollDrift className="section-heading section-heading--split" distance={18}>
             <div><span className="eyebrow">03 / FEATURED SYSTEM</span><h2>Physical visibility.<br /><em>Digital action.</em></h2></div>
             <p>An ORYA × Congo Graphic partnership concept connecting out-of-home visibility to measurable customer journeys.</p>
-          </div>
+          </ScrollDrift>
           <Reveal className="project-frame">
             <img src={projectImage} alt="Urban billboard and smartphone user representing a physical-to-digital customer journey" />
             <div className="project-frame__overlay" />
@@ -170,10 +181,10 @@ export default function Home() {
 
       <section className="process-section section-pad">
         <div className="container">
-          <div className="section-heading section-heading--split">
+          <ScrollDrift className="section-heading section-heading--split" distance={18}>
             <div><span className="eyebrow">04 / HOW WE WORK</span><h2>From complexity<br />to <em>movement.</em></h2></div>
             <p>Every engagement follows a clear path from understanding the real problem to improving the live system.</p>
-          </div>
+          </ScrollDrift>
           <div className="process-grid">
             {process.map((step, index) => (
               <Reveal className="process-step" key={step.number}>
@@ -191,12 +202,12 @@ export default function Home() {
         <div className="global-section__grid" />
         <div className="global-section__orb"><OrbitalStage compact /></div>
         <div className="container global-section__content">
-          <Reveal>
+          <ScrollDrift><Reveal>
             <span className="eyebrow">05 / POSITION</span>
             <h2>Local understanding.<br /><em>Global execution.</em></h2>
             <p>ORYA combines an understanding of how businesses operate in the DRC and across Africa with modern technology, design and growth capabilities.</p>
             <Link href="/about" className="text-link text-link--large">Meet ORYA <ArrowUpRight size={18} /></Link>
-          </Reveal>
+          </Reveal></ScrollDrift>
           <div className="global-section__coordinates mono"><span>KINSHASA</span><strong>04.3250° S<br />15.3222° E</strong><span>AFRICA / GLOBAL</span></div>
         </div>
       </section>

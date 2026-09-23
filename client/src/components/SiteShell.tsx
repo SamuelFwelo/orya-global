@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ArrowUpRight, Menu } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollSignal } from "@/components/ScrollSignal";
 
 const logo = "/manus-storage/orya-official-logo-cropped_1cbe2481.png";
 
@@ -81,6 +82,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </nav>
         </SheetContent>
       </Sheet>
+
+      <ScrollSignal />
 
       <main id="main" tabIndex={-1}>{children}</main>
 
