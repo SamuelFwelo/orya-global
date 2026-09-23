@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { ArrowDown, ArrowRight, ArrowUpRight, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { CapabilityOrbit, OrbitalStage } from "@/components/OrbitalStage";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { outcomes, process, signalJourney } from "@/lib/siteData";
 
 const heroImage = "/manus-storage/orya-kinshasa-horizon_246caae4.jpg";
@@ -18,20 +19,28 @@ function Intro() {
     setVisible(true);
     sessionStorage.setItem("orya-intro-seen", "true");
     const timer = window.setTimeout(() => setVisible(false), 2250);
-    return () => window.clearTimeout(timer);
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setVisible(false);
+    };
+    window.addEventListener("keydown", dismiss);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("keydown", dismiss);
+    };
   }, [reduceMotion]);
 
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div className="intro" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div className="intro" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}>
           <div className="intro__system">
-            <motion.div className="intro__orbit intro__orbit--one" initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} />
-            <motion.div className="intro__orbit intro__orbit--two" initial={{ scaleY: 0, opacity: 0 }} animate={{ scaleY: 1, opacity: 1 }} transition={{ delay: 0.18, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} />
-            <motion.div className="intro__star" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: [0.8, 1.3, 1] }} transition={{ delay: 0.7, duration: 0.65 }} />
+            <motion.div className="intro__orbit intro__orbit--one" initial={{ clipPath: "inset(0 50% 0 50%)", opacity: 0 }} animate={{ clipPath: "inset(0 0 0 0)", opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} />
+            <motion.div className="intro__orbit intro__orbit--two" initial={{ clipPath: "inset(50% 0 50% 0)", opacity: 0 }} animate={{ clipPath: "inset(0 0 0 0)", opacity: 1 }} transition={{ delay: 0.18, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} />
+            <motion.div className="intro__star" initial={{ opacity: 0, transform: "rotate(45deg) scale(.8)" }} animate={{ opacity: 1, transform: ["rotate(45deg) scale(.8)", "rotate(45deg) scale(1.3)", "rotate(45deg) scale(1)"] }} transition={{ delay: 0.7, duration: 0.65 }} />
           </div>
-          <motion.img src={logo} alt="" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.05, duration: 0.6 }} />
+          <motion.img src={logo} alt="" initial={{ opacity: 0, transform: "translate3d(0, 10px, 0)" }} animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }} transition={{ delay: 1.05, duration: 0.6 }} />
           <motion.span className="intro__status mono" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}>SYSTEM ONLINE / 001</motion.span>
+          <button className="intro__skip mono" type="button" onClick={() => setVisible(false)}>Skip intro</button>
         </motion.div>
       )}
     </AnimatePresence>
@@ -42,33 +51,52 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10% 0px" });
   const reduceMotion = useReducedMotion();
-  return <motion.div ref={ref} className={className} initial={reduceMotion ? false : { opacity: 0, y: 34 }} animate={inView ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+  return <motion.div ref={ref} className={className} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translate3d(0, 34px, 0)" }} animate={inView ? { opacity: 1, transform: "translate3d(0, 0, 0)" } : undefined} transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
 export default function Home() {
-  const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const reduceMotion = useReducedMotion();
+  const imageX = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
+  const imageY = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
+  const orbitX = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
+  const orbitY = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
+  const imageTransform = useMotionTemplate`translate3d(${imageX}px, ${imageY}px, 0) scale(1.035)`;
+  const orbitTransform = useMotionTemplate`translate3d(${orbitX}px, ${orbitY}px, 0)`;
 
-  useEffect(() => {
-    document.title = "ORYA | Digital Growth, Automation & Business Intelligence";
-  }, []);
+  usePageMeta(
+    "ORYA | Digital Growth, Automation & Business Intelligence",
+    "ORYA builds connected digital growth, web, automation and operational intelligence systems for ambitious businesses across Africa and globally.",
+    "/",
+  );
 
   const handlePointer = (event: React.PointerEvent<HTMLElement>) => {
-    if (reduceMotion || window.innerWidth < 900) return;
+    if (reduceMotion || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    setCursor({ x: (event.clientX - rect.left) / rect.width - 0.5, y: (event.clientY - rect.top) / rect.height - 0.5 });
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    imageX.set(x * -12);
+    imageY.set(y * -8);
+    orbitX.set(x * 22);
+    orbitY.set(y * 16);
+  };
+
+  const resetPointer = () => {
+    imageX.set(0);
+    imageY.set(0);
+    orbitX.set(0);
+    orbitY.set(0);
   };
 
   return (
     <>
       <Intro />
-      <section className="hero" onPointerMove={handlePointer}>
-        <motion.div className="hero__image" style={{ backgroundImage: `url(${heroImage})` }} animate={{ x: cursor.x * -12, y: cursor.y * -8, scale: 1.035 }} transition={{ type: "spring", stiffness: 40, damping: 20 }} />
+      <section className="hero" onPointerMove={handlePointer} onPointerLeave={resetPointer}>
+        <motion.div className="hero__image" style={{ backgroundImage: `url(${heroImage})`, transform: imageTransform }} />
         <div className="hero__veil" />
         <div className="hero__grid" />
-        <motion.div className="hero__orbital" animate={{ x: cursor.x * 22, y: cursor.y * 16 }} transition={{ type: "spring", stiffness: 45, damping: 18 }}><OrbitalStage /></motion.div>
+        <motion.div className="hero__orbital" style={{ transform: orbitTransform }}><OrbitalStage /></motion.div>
         <div className="container hero__content">
-          <motion.div className="hero__copy" initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+          <motion.div className="hero__copy" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translate3d(0, 28px, 0)" }} animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }} transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
             <div className="hero__kicker"><span className="signal-dot" />TECHNOLOGY / GROWTH / INTELLIGENCE</div>
             <h1>Digital systems<br />that move business<br /><em>forward.</em></h1>
             <p>ORYA combines digital growth, web development, automation and operational intelligence to help ambitious companies grow and operate more effectively.</p>
@@ -126,7 +154,7 @@ export default function Home() {
             <img src={projectImage} alt="Urban billboard and smartphone user representing a physical-to-digital customer journey" />
             <div className="project-frame__overlay" />
             <div className="project-frame__label"><span className="signal-dot" />PARTNERSHIP CONCEPT / KINSHASA</div>
-            <div className="project-frame__number mono">CG—01</div>
+            <div className="project-frame__number mono">CG-01</div>
             <Link href="/work" className="project-frame__link">Explore the system <ArrowUpRight /></Link>
           </Reveal>
           <div className="signal-journey">

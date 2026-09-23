@@ -31,7 +31,7 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
-          <Toaster />
+          <Toaster theme="dark" position="bottom-right" />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

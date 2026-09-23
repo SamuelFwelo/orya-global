@@ -1,13 +1,21 @@
 import { useState, type FormEvent } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
+import { toast } from "sonner";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
 
+  usePageMeta(
+    "Contact ORYA | Start a Technology Discovery Call",
+    "Tell ORYA what your business needs to improve and start a focused conversation about growth, technology or operations.",
+    "/contact",
+  );
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const subject = encodeURIComponent(`ORYA enquiry — ${form.get("company") || form.get("name")}`);
+    const subject = encodeURIComponent(`ORYA enquiry - ${form.get("company") || form.get("name")}`);
     const body = encodeURIComponent([
       `Name: ${form.get("name")}`,
       `Company: ${form.get("company")}`,
@@ -19,6 +27,10 @@ export default function Contact() {
       `Business challenge: ${form.get("challenge")}`,
     ].join("\n"));
     setSent(true);
+    toast.success("Your discovery brief is ready", {
+      description: "Opening a message to contact@orya.global.",
+      duration: 4000,
+    });
     window.location.href = `mailto:contact@orya.global?subject=${subject}&body=${body}`;
   };
 

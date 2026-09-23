@@ -1,10 +1,17 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { signalJourney } from "@/lib/siteData";
 
 const projectImage = "/manus-storage/orya-signal-billboard_b906c289.jpg";
 
 export default function Work() {
+  usePageMeta(
+    "ORYA Work | Connected Physical and Digital Systems",
+    "See how ORYA connects physical visibility, digital media, websites, WhatsApp, customer enquiries and reporting.",
+    "/work",
+  );
+
   return (
     <div className="page page--work">
       <section className="page-hero page-hero--image" style={{ backgroundImage: `url(${projectImage})` }}>
@@ -17,7 +24,7 @@ export default function Work() {
       </section>
       <section className="case-study section-pad">
         <div className="container">
-          <div className="case-study__intro"><span className="mono">SYSTEM / CG—01</span><h2>One connected journey from public space to measurable customer action.</h2><p>Physical advertising creates scale and visibility. ORYA adds the digital layer required to turn that visibility into a clear next step—and to understand what happens after attention is earned.</p></div>
+          <div className="case-study__intro"><span className="mono">SYSTEM / CG-01</span><h2>One connected journey from public space to measurable customer action.</h2><p>Physical advertising creates scale and visibility. ORYA adds the digital layer required to turn that visibility into a clear next step, then understand what happens after attention is earned.</p></div>
           <div className="journey-large">
             {signalJourney.map((stage, index) => <div key={stage} className="journey-large__step"><span className="mono">0{index + 1}</span><i /><h3>{stage}</h3><p>{["Build awareness in high-traffic physical environments.", "Extend the message through targeted digital media.", "Give every prospect an immediate path to act.", "Capture and organize customer intent for follow-up.", "Measure the journey and improve what happens next."][index]}</p></div>)}
           </div>

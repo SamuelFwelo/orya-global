@@ -1,9 +1,16 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { OrbitalStage } from "@/components/OrbitalStage";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { capabilities } from "@/lib/siteData";
 
 export default function Capabilities() {
+  usePageMeta(
+    "ORYA Capabilities | Growth, Automation & Intelligence",
+    "Explore ORYA capabilities in digital growth, web development, AI automation and operational intelligence.",
+    "/capabilities",
+  );
+
   return (
     <div className="page page--capabilities">
       <section className="page-hero">
@@ -12,7 +19,7 @@ export default function Capabilities() {
         <div className="container page-hero__content">
           <span className="eyebrow">ORYA / CAPABILITIES</span>
           <h1>Four forces.<br /><em>One direction.</em></h1>
-          <p>We connect customer growth, digital products, automation and operational intelligence around the business outcome—not the channel.</p>
+          <p>We connect customer growth, digital products, automation and operational intelligence around the business outcome, not the channel.</p>
         </div>
       </section>
       <section className="capability-list section-pad">
