@@ -1,10 +1,18 @@
 import { useState, type FormEvent } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
 import { toast } from "sonner";
+import { CalBookingModal } from "@/components/CalBookingModal";
 import { usePageMeta } from "@/hooks/usePageMeta";
+
+type Booker = {
+  name: string;
+  email: string;
+};
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [booker, setBooker] = useState<Booker>({ name: "", email: "" });
 
   usePageMeta(
     "Contact ORYA | Start a Technology Discovery Call",
@@ -15,23 +23,28 @@ export default function Contact() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const subject = encodeURIComponent(`ORYA enquiry - ${form.get("company") || form.get("name")}`);
+    const name = String(form.get("name") ?? "");
+    const email = String(form.get("email") ?? "");
+    const subject = encodeURIComponent(`ORYA enquiry - ${form.get("company") || name}`);
     const body = encodeURIComponent([
-      `Name: ${form.get("name")}`,
+      `Name: ${name}`,
       `Company: ${form.get("company")}`,
-      `Email: ${form.get("email")}`,
+      `Email: ${email}`,
       `Phone / WhatsApp: ${form.get("phone")}`,
       `Service: ${form.get("service")}`,
       `Timeline: ${form.get("timeline")}`,
       "",
       `Business challenge: ${form.get("challenge")}`,
     ].join("\n"));
+
+    setBooker({ name, email });
     setSent(true);
     toast.success("Your discovery brief is ready", {
-      description: "Opening a message to contact@orya.global.",
-      duration: 4000,
+      description: "Opening your email draft and ORYA booking calendar.",
+      duration: 4500,
     });
     window.location.href = `mailto:contact@orya.global?subject=${subject}&body=${body}`;
+    window.setTimeout(() => setCalendarOpen(true), 450);
   };
 
   return (
@@ -58,11 +71,12 @@ export default function Contact() {
               <label><span>Approximate timeline</span><select name="timeline" defaultValue=""><option value="" disabled>Select one</option><option>As soon as possible</option><option>1–3 months</option><option>3–6 months</option><option>Exploring for later</option></select></label>
               <label className="form-grid__wide"><span>Main business challenge *</span><textarea name="challenge" required rows={5} placeholder="What would you like the business to do better?" /></label>
             </div>
-            <button type="submit" className="orbital-button orbital-button--light"><span>{sent ? "Open email draft" : "Send to ORYA"}</span>{sent ? <Check size={18} /> : <ArrowUpRight size={18} />}</button>
-            <p className="contact-form__note">Submitting opens your email app with the details addressed to contact@orya.global. Direct form delivery and calendar booking can be connected when your funnel is ready.</p>
+            <button type="submit" className="orbital-button orbital-button--light"><span>{sent ? "Open email + calendar" : "Send to ORYA"}</span>{sent ? <Check size={18} /> : <ArrowUpRight size={18} />}</button>
+            <p className="contact-form__note">Submitting opens an email draft addressed to contact@orya.global, then opens the ORYA booking calendar here with your name and email prefilled.</p>
           </form>
         </div>
       </section>
+      <CalBookingModal open={calendarOpen} onOpenChange={setCalendarOpen} name={booker.name} email={booker.email} />
     </div>
   );
 }

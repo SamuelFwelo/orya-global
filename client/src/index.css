@@ -400,6 +400,12 @@ em { font-family: "Instrument Serif", serif; font-weight: 400; }
 .form-grid textarea { resize: vertical; }
 .form-grid__wide { grid-column: 1/-1; }
 .contact-form__note { margin: 1rem 0 0; color: #747981; font-size: .71rem; line-height: 1.5; }
+.cal-booking-modal[data-slot="dialog-content"] { width: min(1100px, calc(100vw - 2rem)); max-width: none; max-height: min(860px, calc(100dvh - 2rem)); overflow: hidden; border: 1px solid rgba(158,173,194,.34); border-radius: 0; padding: clamp(1rem, 2vw, 1.5rem); background: #0b0d10; color: var(--signal-white); box-shadow: 0 32px 100px rgba(0,0,0,.62); }
+.cal-booking-modal[data-slot="dialog-content"] > button { top: 1rem; right: 1rem; z-index: 3; border: 1px solid rgba(245,243,238,.24); border-radius: 0; padding: .4rem; background: rgba(8,9,11,.78); color: var(--signal-white); }
+.cal-booking-modal [data-slot="dialog-title"] { padding-right: 2.5rem; font: 500 clamp(1.5rem, 3vw, 2.4rem)/1 "Space Grotesk", sans-serif; letter-spacing: -.045em; }
+.cal-booking-modal [data-slot="dialog-description"] { margin-top: -.35rem; color: #969ca5; font-size: .8rem; line-height: 1.5; }
+.cal-booking-modal__frame { display: block; width: 100%; height: min(655px, calc(100dvh - 185px)); min-height: 440px; margin-top: .35rem; border: 1px solid rgba(216,213,206,.14); background: var(--signal-white); }
+.cal-booking-modal__fallback { display: inline-flex; align-items: center; gap: .55rem; margin-top: .1rem; color: var(--cool-signal); border-bottom: 1px solid rgba(158,173,194,.45); padding-bottom: .2rem; font: 500 .58rem/1 "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
 
 .not-found { min-height: 100svh; position: relative; display: grid; place-items: center; overflow: hidden; text-align: center; }
 .not-found__orb { position: absolute; width: min(75vw,800px); height: 85%; opacity: .3; }
@@ -530,6 +536,8 @@ em { font-family: "Instrument Serif", serif; font-weight: 400; }
   .contact-status { margin-top: 2.5rem; }
   .form-grid { grid-template-columns: 1fr; }
   .contact-form__head { flex-direction: column; }
+  .cal-booking-modal[data-slot="dialog-content"] { max-height: calc(100dvh - 1rem); padding: 1rem; }
+  .cal-booking-modal__frame { height: calc(100dvh - 175px); min-height: 390px; }
 }
 
 @media (hover: hover) and (pointer: fine) {
