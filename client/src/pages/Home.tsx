@@ -49,6 +49,10 @@ export default function Home() {
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const reduceMotion = useReducedMotion();
 
+  useEffect(() => {
+    document.title = "ORYA | Digital Growth, Automation & Business Intelligence";
+  }, []);
+
   const handlePointer = (event: React.PointerEvent<HTMLElement>) => {
     if (reduceMotion || window.innerWidth < 900) return;
     const rect = event.currentTarget.getBoundingClientRect();
