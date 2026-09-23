@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { ArrowUpRight } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { getCalBookingUrl } from "@/lib/calBooking";
 
 type BookingDetails = {
@@ -26,11 +26,21 @@ export function CalBookingModal({ open, onOpenChange, name, email }: CalBookingM
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="cal-booking-modal" showCloseButton>
-        <DialogTitle>Choose your discovery time.</DialogTitle>
-        <DialogDescription>
-          Your details are prefilled. Select a time that works and keep the conversation moving.
-        </DialogDescription>
+      <DialogContent className="cal-booking-modal" showCloseButton={false}>
+        <div className="cal-booking-modal__header">
+          <div>
+            <DialogTitle>Choose your discovery time.</DialogTitle>
+            <DialogDescription>
+              Your details are prefilled. Select a time that works and keep the conversation moving.
+            </DialogDescription>
+          </div>
+          <DialogClose asChild>
+            <button type="button" className="cal-booking-modal__exit">
+              <ArrowLeft size={15} aria-hidden="true" />
+              Return to ORYA
+            </button>
+          </DialogClose>
+        </div>
         <iframe
           id="orya-cal-booking"
           title="Book an ORYA Discovery Call"

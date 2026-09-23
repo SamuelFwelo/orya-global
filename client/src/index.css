@@ -401,10 +401,12 @@ em { font-family: "Instrument Serif", serif; font-weight: 400; }
 .form-grid__wide { grid-column: 1/-1; }
 .contact-form__note { margin: 1rem 0 0; color: #747981; font-size: .71rem; line-height: 1.5; }
 .cal-booking-modal[data-slot="dialog-content"] { width: min(1100px, calc(100vw - 2rem)); max-width: none; max-height: min(860px, calc(100dvh - 2rem)); overflow: hidden; border: 1px solid rgba(158,173,194,.34); border-radius: 0; padding: clamp(1rem, 2vw, 1.5rem); background: #0b0d10; color: var(--signal-white); box-shadow: 0 32px 100px rgba(0,0,0,.62); }
-.cal-booking-modal[data-slot="dialog-content"] > button { top: 1rem; right: 1rem; z-index: 3; border: 1px solid rgba(245,243,238,.24); border-radius: 0; padding: .4rem; background: rgba(8,9,11,.78); color: var(--signal-white); }
-.cal-booking-modal [data-slot="dialog-title"] { padding-right: 2.5rem; font: 500 clamp(1.5rem, 3vw, 2.4rem)/1 "Space Grotesk", sans-serif; letter-spacing: -.045em; }
+.cal-booking-modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-right: 0; }
+.cal-booking-modal [data-slot="dialog-title"] { font: 500 clamp(1.5rem, 3vw, 2.4rem)/1 "Space Grotesk", sans-serif; letter-spacing: -.045em; }
 .cal-booking-modal [data-slot="dialog-description"] { margin-top: -.35rem; color: #969ca5; font-size: .8rem; line-height: 1.5; }
-.cal-booking-modal__frame { display: block; width: 100%; height: min(655px, calc(100dvh - 185px)); min-height: 440px; margin-top: .35rem; border: 1px solid rgba(216,213,206,.14); background: var(--signal-white); }
+.cal-booking-modal__exit { flex: none; display: inline-flex; align-items: center; gap: .6rem; min-height: 40px; border: 1px solid rgba(245,243,238,.45); border-radius: 0; padding: .65rem .78rem; background: var(--signal-white); color: var(--void); font: 500 .59rem/1 "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; transition: transform 160ms var(--ease-out), background-color 180ms ease, border-color 180ms ease; }
+.cal-booking-modal__exit:active { transform: scale(.97); }
+.cal-booking-modal__frame { display: block; width: 100%; height: min(655px, calc(100dvh - 225px)); min-height: 400px; margin-top: .35rem; border: 1px solid rgba(216,213,206,.14); background: var(--signal-white); }
 .cal-booking-modal__fallback { display: inline-flex; align-items: center; gap: .55rem; margin-top: .1rem; color: var(--cool-signal); border-bottom: 1px solid rgba(158,173,194,.45); padding-bottom: .2rem; font: 500 .58rem/1 "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
 
 .not-found { min-height: 100svh; position: relative; display: grid; place-items: center; overflow: hidden; text-align: center; }
@@ -537,7 +539,9 @@ em { font-family: "Instrument Serif", serif; font-weight: 400; }
   .form-grid { grid-template-columns: 1fr; }
   .contact-form__head { flex-direction: column; }
   .cal-booking-modal[data-slot="dialog-content"] { max-height: calc(100dvh - 1rem); padding: 1rem; }
-  .cal-booking-modal__frame { height: calc(100dvh - 175px); min-height: 390px; }
+  .cal-booking-modal__header { align-items: stretch; flex-direction: column; gap: .8rem; }
+  .cal-booking-modal__exit { align-self: stretch; justify-content: center; }
+  .cal-booking-modal__frame { height: calc(100dvh - 255px); min-height: 330px; }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -555,6 +559,7 @@ em { font-family: "Instrument Serif", serif; font-weight: 400; }
   .project-frame:hover img { transform: scale(1.018); }
   .signal-node:hover { transform: translate3d(0, -4px, 0); color: var(--cool-signal); }
   .signal-node:hover .signal-node__dot { background: var(--cool-signal); box-shadow: 0 0 18px rgba(158,173,194,.9); }
+  .cal-booking-modal__exit:hover { background: var(--cool-signal); border-color: var(--cool-signal); }
 }
 
 @media (pointer: coarse) {
