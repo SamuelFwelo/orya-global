@@ -97,7 +97,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="site-footer__bottom">
           <Brand compact />
           <div className="footer-meta">
-            <span>Kinshasa · Africa · Global</span>
+            <span>America · Africa · Global</span>
             <a href="mailto:contact@orya.global">contact@orya.global</a>
           </div>
           <div className="footer-meta footer-meta--right">
