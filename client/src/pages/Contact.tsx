@@ -67,7 +67,7 @@ export default function Contact() {
               <label><span>Company *</span><input name="company" required autoComplete="organization" placeholder="Company name" /></label>
               <label><span>Email *</span><input name="email" required type="email" autoComplete="email" placeholder="you@company.com" /></label>
               <label><span>WhatsApp or telephone</span><input name="phone" autoComplete="tel" placeholder="+243 ..." /></label>
-              <label><span>Service needed *</span><select name="service" required defaultValue=""><option value="" disabled>Select one</option><option>Digital growth</option><option>Web & digital products</option><option>AI & automation</option><option>Operational intelligence</option><option>Not sure yet</option></select></label>
+              <label><span>Service needed *</span><select name="service" required defaultValue=""><option value="" disabled>Select one</option><option>Digital growth & web development</option><option>AI & automation</option><option>Analytics</option><option>Not sure yet</option></select></label>
               <label><span>Approximate timeline</span><select name="timeline" defaultValue=""><option value="" disabled>Select one</option><option>As soon as possible</option><option>1–3 months</option><option>3–6 months</option><option>Exploring for later</option></select></label>
               <label className="form-grid__wide"><span>Main business challenge *</span><textarea name="challenge" required rows={5} placeholder="What would you like the business to do better?" /></label>
             </div>

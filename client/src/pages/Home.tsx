@@ -1,216 +1,119 @@
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useMotionTemplate, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
-import { ArrowDown, ArrowRight, ArrowUpRight, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowDown, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, Check, CircleDot, Globe2, Layers3, Link2, MessageCircle, MousePointer2, Plus, Radio, Workflow } from "lucide-react";
 import { Link } from "wouter";
-import { CapabilityOrbit, OrbitalStage } from "@/components/OrbitalStage";
-import { ScrollDrift } from "@/components/ScrollDrift";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { outcomes, process, signalJourney } from "@/lib/siteData";
+import { capabilities, process } from "@/lib/siteData";
+import "./home-refresh.css";
 
-const heroImage = "/manus-storage/orya-kinshasa-horizon_246caae4.jpg";
-const projectImage = "/manus-storage/orya-signal-billboard_b906c289.jpg";
-const logo = "/manus-storage/orya-official-logo-cropped_1cbe2481.png";
+const journey = [
+  {
+    label: "Get discovered", category: "Digital growth", icon: Radio,
+    heading: "Give attention somewhere to go.",
+    copy: "Connect a campaign, a social post or a physical touchpoint to one clear next step. Every channel becomes the beginning of a customer journey.",
+    source: "Campaign or QR code", action: "A focused landing page", output: "A traceable visit",
+    detail: "Keep the campaign source attached to the visit, so your team can see where interest starts.",
+    next: "Make the next action easy to take.",
+  },
+  {
+    label: "Create action", category: "Web & digital products", icon: MousePointer2,
+    heading: "Turn a visit into a conversation.",
+    copy: "Give people the information they need and a simple way to act. A focused website and a connected WhatsApp journey turn interest into an enquiry.",
+    source: "An interested visitor", action: "An enquiry or WhatsApp chat", output: "A clear customer need",
+    detail: "Capture the service they need and how they found you, without adding unnecessary steps.",
+    next: "Help the right person follow up.",
+  },
+  {
+    label: "Connect the work", category: "AI & automation", icon: Workflow,
+    heading: "Keep the next step moving.",
+    copy: "Route an enquiry to the right person, keep the customer context together and trigger the next task. Less copying between tools. More time for the work that matters.",
+    source: "A new enquiry", action: "A connected CRM workflow", output: "An assigned next step",
+    detail: "Define the owner, the follow-up and the status in one workflow your team can actually use.",
+    next: "See what happens across the whole journey.",
+  },
+  {
+    label: "See what works", category: "Analytics", icon: BarChart3,
+    heading: "Make the whole journey visible.",
+    copy: "Bring campaign, enquiry and operational data together. See which channels create useful conversations and where the journey needs attention.",
+    source: "Campaign + CRM activity", action: "A shared business view", output: "A better next decision",
+    detail: "Review the journey from first touch to follow-up using agreed definitions and connected reporting.",
+    next: "Use what you learn to improve the system.",
+  },
+];
 
-function Intro() {
-  const [visible, setVisible] = useState(false);
-  const reduceMotion = useReducedMotion();
+const faqs = [
+  { question: "Where would we start?", answer: "With the business problem. In a discovery conversation, we look at your goals, customer journey, current tools and constraints. Then we define a focused first step and the outcomes it should support." },
+  { question: "Do we need every service?", answer: "No. An engagement can start with a single need, such as a website, a campaign, an automated workflow or a business dashboard. We connect the relevant capabilities around what your business needs next." },
+  { question: "Can you work with our existing systems?", answer: "We begin by reviewing what you already use. Where the tools and available access support it, we connect and improve those systems. Any new tools or changes are defined as part of the project scope." },
+  { question: "Do you work outside Kinshasa?", answer: "Yes. ORYA brings an understanding of businesses in the DRC and across Africa to work with companies locally and globally. We agree on the collaboration approach around your team and project." },
+];
 
-  useEffect(() => {
-    if (sessionStorage.getItem("orya-intro-seen") || reduceMotion) return;
-    setVisible(true);
-    sessionStorage.setItem("orya-intro-seen", "true");
-    const timer = window.setTimeout(() => setVisible(false), 2250);
-    const dismiss = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setVisible(false);
-    };
-    window.addEventListener("keydown", dismiss);
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("keydown", dismiss);
-    };
-  }, [reduceMotion]);
-
+function BusinessVisual() {
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div className="intro" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}>
-          <div className="intro__system">
-            <motion.div className="intro__orbit intro__orbit--one" initial={{ clipPath: "inset(0 50% 0 50%)", opacity: 0 }} animate={{ clipPath: "inset(0 0 0 0)", opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} />
-            <motion.div className="intro__orbit intro__orbit--two" initial={{ clipPath: "inset(50% 0 50% 0)", opacity: 0 }} animate={{ clipPath: "inset(0 0 0 0)", opacity: 1 }} transition={{ delay: 0.18, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} />
-            <motion.div className="intro__star" initial={{ opacity: 0, transform: "rotate(45deg) scale(.8)" }} animate={{ opacity: 1, transform: ["rotate(45deg) scale(.8)", "rotate(45deg) scale(1.3)", "rotate(45deg) scale(1)"] }} transition={{ delay: 0.7, duration: 0.65 }} />
-          </div>
-          <motion.img src={logo} alt="" initial={{ opacity: 0, transform: "translate3d(0, 10px, 0)" }} animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }} transition={{ delay: 1.05, duration: 0.6 }} />
-          <motion.span className="intro__status mono" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}>SYSTEM ONLINE / 001</motion.span>
-          <button className="intro__skip mono" type="button" onClick={() => setVisible(false)}>Skip intro</button>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="business-visual" aria-hidden="true">
+      <div className="business-visual__grid" />
+      <div className="business-visual__caption"><span /> CONNECTED BY DESIGN</div>
+      <div className="business-visual__orbit business-visual__orbit--outer" />
+      <div className="business-visual__orbit business-visual__orbit--inner" />
+      <div className="business-visual__orbit business-visual__orbit--tilted" />
+      <div className="business-visual__core"><span className="business-visual__spark">✳</span><span>Your business</span><small>Moving forward.</small></div>
+      <div className="business-node business-node--growth"><Radio size={17} /><span>Growth</span><span className="business-node__dot" /></div>
+      <div className="business-node business-node--experience"><Layers3 size={17} /><span>Experience</span></div>
+      <div className="business-node business-node--automation"><Workflow size={17} /><span>Automation</span></div>
+      <div className="business-node business-node--intelligence"><BarChart3 size={17} /><span>Intelligence</span><span className="business-node__dot" /></div>
+      <div className="business-visual__foot"><span>Connected capabilities.</span><span>One connected system. <ArrowUpRight size={13} /></span></div>
+    </div>
   );
 }
 
-function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
-  const reduceMotion = useReducedMotion();
-  return <motion.div ref={ref} className={className} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translate3d(0, 34px, 0)" }} animate={inView ? { opacity: 1, transform: "translate3d(0, 0, 0)" } : undefined} transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+function JourneyExample() {
+  const [active, setActive] = useState(0);
+  const step = journey[active];
+  const Icon = step.icon;
+  return (
+    <section className="flow-example flow-wrap" id="connected-journey" aria-labelledby="journey-heading">
+      <div className="flow-example__surface">
+        <div className="flow-example__meta"><span><CircleDot size={15} /> ORYA / IN PRACTICE</span><span>Illustrative customer journey</span></div>
+        <div className="flow-example__heading"><h2 id="journey-heading">Attention is the start.<br />What happens next matters.</h2><p>Explore how a connected system turns<br className="desktop-break" /> a first touch into a useful next step.</p></div>
+        <div className="journey-selector" role="group" aria-label="Explore the customer journey">
+          {journey.map((item, index) => <button key={item.label} type="button" aria-pressed={active === index} aria-controls="journey-detail" className={active === index ? "is-selected" : ""} onClick={() => setActive(index)}><span className="journey-selector__number">0{index + 1}</span><span>{item.label}</span><ArrowDownRight size={16} aria-hidden="true" /></button>)}
+        </div>
+        <div className="journey-detail" id="journey-detail" aria-live="polite" aria-atomic="true">
+          <div className="journey-detail__copy"><span className="flow-kicker"><Icon size={15} aria-hidden="true" />{step.category}</span><h3>{step.heading}</h3><p>{step.copy}</p><Link href={active === 3 ? "/analytics" : "/capabilities"} className="flow-text-link">Explore this capability <ArrowUpRight size={16} /></Link></div>
+          <div className="journey-diagram">
+            <div className="journey-diagram__head"><span>A connected handoff</span><span>0{active + 1} / 04</span></div>
+            <div className="journey-diagram__path">
+              <div className="journey-diagram__input"><span className="journey-diagram__icon"><Icon size={19} /></span><div><small>START WITH</small><strong>{step.source}</strong></div></div>
+              <div className="journey-diagram__connector"><span /><ArrowDown size={14} /></div>
+              <div className="journey-diagram__action"><Link2 size={18} /><strong>{step.action}</strong><Check size={16} /></div>
+              <div className="journey-diagram__connector"><span /><ArrowDown size={14} /></div>
+              <div className="journey-diagram__output"><div><small>MAKE POSSIBLE</small><strong>{step.output}</strong></div><ArrowUpRight size={22} /></div>
+            </div><p>{step.detail}</p>
+          </div>
+        </div>
+        <div className="flow-example__next"><span><span className="flow-status-dot" /> BUILT TO KEEP MOVING</span><p>{step.next}</p></div>
+      </div>
+      <div className="flow-example__note"><span>One journey. Connected from end to end.</span><Link href="/work">Explore a connected workflow <ArrowUpRight size={14} /></Link></div>
+    </section>
+  );
 }
 
 export default function Home() {
-  const reduceMotion = useReducedMotion();
-  const imageX = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
-  const imageY = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
-  const orbitX = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
-  const orbitY = useSpring(useMotionValue(0), { stiffness: 100, damping: 20, mass: 1 });
-  const { scrollY } = useScroll();
-  const imageScrollY = useSpring(useTransform(scrollY, [0, 900], [0, 84]), { stiffness: 115, damping: 28, mass: 0.3 });
-  const orbitScrollY = useSpring(useTransform(scrollY, [0, 900], [0, -64]), { stiffness: 115, damping: 28, mass: 0.3 });
-  const copyScrollY = useSpring(useTransform(scrollY, [0, 620], [0, -34]), { stiffness: 115, damping: 28, mass: 0.3 });
-  const copyOpacity = useTransform(scrollY, [0, 620], [1, 0.78]);
-  const imageYWithScroll = useTransform([imageY, imageScrollY], (latest) => Number(latest[0]) + Number(latest[1]));
-  const orbitYWithScroll = useTransform([orbitY, orbitScrollY], (latest) => Number(latest[0]) + Number(latest[1]));
-  const imageTransform = useMotionTemplate`translate3d(${imageX}px, ${imageYWithScroll}px, 0) scale(1.035)`;
-  const orbitTransform = useMotionTemplate`translate3d(${orbitX}px, ${orbitYWithScroll}px, 0)`;
-  const copyTransform = useMotionTemplate`translate3d(0, ${copyScrollY}px, 0)`;
-
-  usePageMeta(
-    "ORYA | Digital Growth, Automation & Business Intelligence",
-    "ORYA builds connected digital growth, web, automation and operational intelligence systems for ambitious businesses across Africa and globally.",
-    "/",
-  );
-
-  const handlePointer = (event: React.PointerEvent<HTMLElement>) => {
-    if (reduceMotion || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    imageX.set(x * -12);
-    imageY.set(y * -8);
-    orbitX.set(x * 22);
-    orbitY.set(y * 16);
-  };
-
-  const resetPointer = () => {
-    imageX.set(0);
-    imageY.set(0);
-    orbitX.set(0);
-    orbitY.set(0);
-  };
-
+  usePageMeta("ORYA | Digital Growth, Automation & Business Intelligence", "ORYA connects digital growth, web experiences, automation and operational intelligence to help ambitious businesses move forward. Based in Kinshasa. Built for a connected world.", "/");
   return (
-    <>
-      <Intro />
-      <section className="hero" onPointerMove={handlePointer} onPointerLeave={resetPointer}>
-        <motion.div className="hero__image" style={{ backgroundImage: `url(${heroImage})`, transform: imageTransform }} />
-        <div className="hero__veil" />
-        <div className="hero__grid" />
-        <motion.div className="hero__orbital" style={{ transform: orbitTransform }}><OrbitalStage /></motion.div>
-        <div className="container hero__content">
-          <motion.div className="hero__copy-drift" style={{ transform: reduceMotion ? "translate3d(0, 0, 0)" : copyTransform, opacity: reduceMotion ? 1 : copyOpacity }}>
-            <motion.div className="hero__copy" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translate3d(0, 28px, 0)" }} animate={{ opacity: 1, transform: "translate3d(0, 0, 0)" }} transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-              <div className="hero__kicker"><span className="signal-dot" />TECHNOLOGY / GROWTH / INTELLIGENCE</div>
-              <h1>Digital systems<br />that move business<br /><em>forward.</em></h1>
-              <p>ORYA combines digital growth, web development, automation and operational intelligence to help ambitious companies grow and operate more effectively.</p>
-              <div className="hero__actions">
-                <Link href="/contact" className="orbital-button orbital-button--light"><span>Book a discovery call</span><ArrowUpRight size={18} /></Link>
-                <Link href="/capabilities" className="text-link">Explore our capabilities <ArrowRight size={17} /></Link>
-              </div>
-            </motion.div>
-          </motion.div>
-          <div className="hero__rail">
-            <span className="mono">ORYA / SYSTEM 001</span>
-            <div><small>FOCUS</small><strong>MEASURABLE<br />BUSINESS MOVEMENT</strong></div>
-            <div><small>OPERATING FROM</small><strong>KINSHASA<br />TO THE WORLD</strong></div>
-          </div>
-          <a href="#introduction" className="scroll-cue"><ArrowDown size={15} /><span>ENTER THE SYSTEM</span></a>
-        </div>
+    <div className="flow-home">
+      <section className="flow-hero flow-wrap" aria-labelledby="home-heading">
+        <div className="flow-hero__copy"><span className="flow-kicker"><span className="flow-status-dot" /> TECHNOLOGY, WITH A BUSINESS PURPOSE</span><h1 id="home-heading">Your next move.<br /><em>Connected.</em></h1><p>Turn ambition into a business that works better. ORYA connects digital growth, web experiences, automation and intelligence to move you forward.</p><div className="flow-hero__actions"><Link href="/contact" className="flow-button">Book a discovery call <ArrowUpRight size={18} /></Link><a href="#connected-journey" className="flow-text-link">See how it connects <ArrowDown size={15} /></a></div><div className="flow-hero__location"><Globe2 size={14} /><span>ROOTED IN KINSHASA. CONNECTED TO THE WORLD.</span></div></div>
+        <BusinessVisual />
       </section>
-
-      <section id="introduction" className="intro-section section-pad">
-        <div className="container">
-          <div className="section-index"><span className="mono">01 / ORIENTATION</span><span className="section-index__line" /></div>
-          <Reveal className="intro-statement">
-            <span className="eyebrow">WHY ORYA EXISTS</span>
-            <h2>Technology connected<br />to <em>business outcomes.</em></h2>
-            <p>We identify where technology can save time, improve customer experiences or create new revenue. Then we design and build the systems required to make that improvement operational.</p>
-          </Reveal>
-          <div className="outcome-grid">
-            {outcomes.map((outcome, index) => (
-              <Reveal key={outcome} className="outcome-card">
-                <span className="mono">0{index + 1}</span><p>{outcome}</p><ChevronRight size={18} />
-              </Reveal>
-            ))}
-          </div>
-        </div>
+      <JourneyExample />
+      <section className="flow-context flow-wrap" aria-labelledby="context-heading">
+        <div className="flow-context__copy"><span className="flow-kicker">YOUR BUSINESS, BEFORE THE TECHNOLOGY</span><h2 id="context-heading">Better systems start<br />with understanding<br /><em>how you work.</em></h2><p>Your customers, your team, your constraints. We start there. Then we connect the strategy, experiences and tools around the outcomes that matter to your business.</p><Link href="/about" className="flow-text-link">Get to know ORYA <ArrowUpRight size={16} /></Link></div>
+        <div className="business-context"><span className="business-context__label">THE PIECES YOU WORK WITH</span><div className="business-context__sources"><span><MessageCircle size={16} /> Customer conversations</span><span><Layers3 size={16} /> Everyday tools</span><span><BarChart3 size={16} /> Business data</span></div><div className="business-context__join"><span /><ArrowDown size={17} /></div><div className="business-context__definition"><span className="flow-kicker">A SHARED DIRECTION</span><h3>What should work better?</h3><p>Agree on the problem, define a useful outcome and build the connections that make it possible.</p><div><span>Clear priorities</span><span>Connected workflows</span><span>Useful measurement</span></div></div><p className="business-context__foot"><Check size={15} /> Built around your business. Designed to work together.</p></div>
       </section>
-
-      <section className="capabilities-section section-pad">
-        <div className="capabilities-section__beam" />
-        <div className="container">
-          <ScrollDrift className="section-heading section-heading--split">
-            <div><span className="eyebrow">02 / CONNECTED CAPABILITIES</span><h2>One system.<br /><em>Four forces.</em></h2></div>
-            <p>Not separate agency services. A connected operating model designed around what the business needs to achieve next.</p>
-          </ScrollDrift>
-          <CapabilityOrbit />
-          <Link href="/capabilities" className="section-link">View all capabilities <ArrowUpRight size={18} /></Link>
-        </div>
-      </section>
-
-      <section className="work-section section-pad">
-        <div className="container">
-          <ScrollDrift className="section-heading section-heading--split" distance={18}>
-            <div><span className="eyebrow">03 / FEATURED SYSTEM</span><h2>Physical visibility.<br /><em>Digital action.</em></h2></div>
-            <p>An ORYA × Congo Graphic partnership concept connecting out-of-home visibility to measurable customer journeys.</p>
-          </ScrollDrift>
-          <Reveal className="project-frame">
-            <img src={projectImage} alt="Urban billboard and smartphone user representing a physical-to-digital customer journey" />
-            <div className="project-frame__overlay" />
-            <div className="project-frame__label"><span className="signal-dot" />PARTNERSHIP CONCEPT / KINSHASA</div>
-            <div className="project-frame__number mono">CG-01</div>
-            <Link href="/work" className="project-frame__link">Explore the system <ArrowUpRight /></Link>
-          </Reveal>
-          <div className="signal-journey">
-            {signalJourney.map((stage, index) => (
-              <div className="signal-stage" key={stage}>
-                <div className="signal-stage__track"><span /><i style={{ animationDelay: `${index * 0.42}s` }} /></div>
-                <small className="mono">0{index + 1}</small><strong>{stage}</strong>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="process-section section-pad">
-        <div className="container">
-          <ScrollDrift className="section-heading section-heading--split" distance={18}>
-            <div><span className="eyebrow">04 / HOW WE WORK</span><h2>From complexity<br />to <em>movement.</em></h2></div>
-            <p>Every engagement follows a clear path from understanding the real problem to improving the live system.</p>
-          </ScrollDrift>
-          <div className="process-grid">
-            {process.map((step, index) => (
-              <Reveal className="process-step" key={step.number}>
-                <span className="process-step__number mono">{step.number}</span>
-                <div className="process-step__orbit"><i /></div>
-                <h3>{step.title}</h3><p>{step.copy}</p>
-                {index < process.length - 1 && <ArrowRight className="process-step__arrow" size={18} />}
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="global-section">
-        <div className="global-section__grid" />
-        <div className="global-section__orb"><OrbitalStage compact /></div>
-        <div className="container global-section__content">
-          <ScrollDrift><Reveal>
-            <span className="eyebrow">05 / POSITION</span>
-            <h2>Local understanding.<br /><em>Global execution.</em></h2>
-            <p>ORYA combines an understanding of how businesses operate in the DRC and across Africa with modern technology, design and growth capabilities.</p>
-            <Link href="/about" className="text-link text-link--large">Meet ORYA <ArrowUpRight size={18} /></Link>
-          </Reveal></ScrollDrift>
-          <div className="global-section__coordinates mono"><span>KINSHASA</span><strong>04.3250° S<br />15.3222° E</strong><span>AFRICA / GLOBAL</span></div>
-        </div>
-      </section>
-    </>
+      <section className="flow-capabilities" aria-labelledby="capabilities-heading"><div className="flow-wrap"><div className="flow-section-heading"><div><span className="flow-kicker">THREE AREAS. ONE CONNECTED BUSINESS.</span><h2 id="capabilities-heading">More ways to<br /><em>move forward.</em></h2></div><p>Start with what your business needs now.<br />Connect what comes next.</p></div><div className="flow-capability-list">{capabilities.map((capability) => <Link href={capability.id === "analytics" ? "/analytics" : "/capabilities"} className="flow-capability" key={capability.id}><span className="flow-capability__number">{capability.number}</span><div className="flow-capability__title"><span>{capability.title}</span><h3>{capability.outcome}</h3></div><p>{capability.statement}</p><span className="flow-capability__arrow"><ArrowUpRight size={22} aria-hidden="true" /></span></Link>)}</div></div></section>
+      <section className="flow-process flow-wrap" aria-labelledby="process-heading"><div className="flow-section-heading"><div><span className="flow-kicker">A CLEAR PATH FROM IDEA TO IMPACT</span><h2 id="process-heading">Build it. Connect it.<br /><em>Keep improving it.</em></h2></div><Link href="/contact" className="flow-text-link">Let’s talk about your next step <ArrowUpRight size={16} /></Link></div><div className="flow-process__steps">{process.map((step) => <article key={step.number}><div><span>{step.number}</span><ArrowRight size={18} aria-hidden="true" /></div><h3>{step.title}</h3><p>{step.copy}</p></article>)}</div></section>
+      <section className="flow-faq flow-wrap" aria-labelledby="faq-heading"><div><span className="flow-kicker">A FEW THINGS YOU MIGHT BE WONDERING</span><h2 id="faq-heading">Good questions.<br /><em>Clear answers.</em></h2><p>Have something else in mind?</p><Link href="/contact" className="flow-text-link">Talk to our team <ArrowUpRight size={16} /></Link></div><div className="flow-faq__list">{faqs.map((faq) => <details key={faq.question}><summary>{faq.question}<Plus size={18} aria-hidden="true" /></summary><p>{faq.answer}</p></details>)}</div></section>
+      <section className="flow-cta" aria-labelledby="cta-heading"><div className="flow-wrap flow-cta__inner"><div><span className="flow-kicker">MAKE WHAT’S NEXT.</span><h2 id="cta-heading">Let’s connect<br />your <em>next move.</em></h2><p>Start with a conversation about what your business could do better.</p><Link href="/contact" className="flow-button">Book a discovery call <ArrowUpRight size={18} /></Link></div><div className="flow-cta__art" aria-hidden="true"><span /><span /><span /><i>✳</i></div></div></section>
+    </div>
   );
 }

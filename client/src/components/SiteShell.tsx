@@ -3,20 +3,29 @@ import { ArrowUpRight, Menu } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollSignal } from "@/components/ScrollSignal";
+import "./site-shell-refresh.css";
 
 const logo = "/manus-storage/orya-official-logo-cropped_1cbe2481.png";
 
 const nav = [
   { href: "/capabilities", label: "Capabilities" },
+  { href: "/analytics", label: "Analytics" },
   { href: "/work", label: "Work" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
 export function Brand({ compact = false }: { compact?: boolean }) {
+  const [imageUnavailable, setImageUnavailable] = useState(false);
+  const [location] = useLocation();
+
   return (
-    <Link href="/" className={`brand-lockup ${compact ? "brand-lockup--compact" : ""}`} aria-label="ORYA home">
-      <img src={logo} alt="ORYA, Make what's next" />
+    <Link href="/" className={`brand-lockup ${compact ? "brand-lockup--compact" : ""}`} aria-label="ORYA home" onClick={() => { if (location === "/") window.scrollTo({ top: 0, behavior: "instant" }); }}>
+      {imageUnavailable ? (
+        <span className="brand-wordmark">ORYA<span className="brand-wordmark__period">.</span></span>
+      ) : (
+        <img src={logo} alt="ORYA, Make what's next" onError={() => setImageUnavailable(true)} />
+      )}
     </Link>
   );
 }
@@ -25,6 +34,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
+  const refresh = location === "/" || location === "/analytics";
 
   useEffect(() => {
     setOpen(false);
@@ -39,7 +49,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="site-shell">
+    <div className={`site-shell ${refresh ? "site-shell--refresh" : ""}`}>
       <a className="skip-link" href="#main">Skip to content</a>
       <Sheet open={open} onOpenChange={setOpen}>
         <header className={`site-header ${scrolled ? "site-header--scrolled" : ""}`}>
@@ -53,7 +63,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               ))}
             </nav>
             <Link href="/contact" className="header-cta">
-              Start a conversation <ArrowUpRight size={15} aria-hidden="true" />
+              {refresh ? "Book a discovery call" : "Start a conversation"} <ArrowUpRight size={15} aria-hidden="true" />
             </Link>
             <SheetTrigger asChild>
               <button className="menu-trigger" type="button" aria-label="Open navigation">
@@ -63,7 +73,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <SheetContent side="right" className="mobile-menu">
+        <SheetContent side="right" className={`mobile-menu ${refresh ? "mobile-menu--refresh" : ""}`}>
           <SheetTitle className="sr-only">ORYA navigation</SheetTitle>
           <SheetDescription className="sr-only">Navigate the ORYA website</SheetDescription>
           <div className="mobile-menu__glow" aria-hidden="true" />
@@ -83,10 +93,31 @@ export function SiteShell({ children }: { children: ReactNode }) {
         </SheetContent>
       </Sheet>
 
-      <ScrollSignal />
+      {!refresh && <ScrollSignal />}
 
       <main id="main" tabIndex={-1}>{children}</main>
 
+      {refresh ? (
+        <footer className="refresh-footer">
+          <div className="refresh-footer__main">
+            <div className="refresh-footer__brand">
+              <Brand compact />
+              <p>Make what’s next.</p>
+            </div>
+            <nav className="refresh-footer__links" aria-label="Footer navigation">
+              {nav.map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+            </nav>
+            <div className="refresh-footer__contact">
+              <span>Let’s build something useful.</span>
+              <a href="mailto:contact@orya.global">contact@orya.global <ArrowUpRight size={15} aria-hidden="true" /></a>
+            </div>
+          </div>
+          <div className="refresh-footer__bottom">
+            <span>© {new Date().getFullYear()} ORYA</span>
+            <span>America · Africa · Global</span>
+          </div>
+        </footer>
+      ) : (
       <footer className="site-footer">
         <div className="site-footer__top">
           <div>
@@ -109,6 +140,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+      )}
     </div>
   );
 }
